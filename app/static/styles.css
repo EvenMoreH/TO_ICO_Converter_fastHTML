@@ -93,15 +93,3 @@
     cursor: pointer;
     font-size: var(--font-size);
   }
-
-  button:hover {
-    background: #7a8da1;
-  }
-
-  link:hover {
-    background: #7a8da1;
-  }
-
-  A:hover {
-    background: #7a8da1;
-  }
