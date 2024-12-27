@@ -1,6 +1,6 @@
 from fasthtml.common import * # type: ignore
 from fasthtml.common import (
-    Form, H1, Input, Button, Html, Head, Body, Div, P, Title, Titled, Base, Link, Br, A, UploadFile ,Response
+    Form, Input, Button, Html, Head, Body, Div, P, Title, Titled, Base, Link, Br, A, Img, Hr, UploadFile ,Response
 )
 from PIL import Image # type: ignore
 from pathlib import Path
@@ -33,14 +33,24 @@ class GlobalFileName:
 class GlobalFileExtension:
     file_extension: str
 
-# conversion function to .ico that will downscale to 256px only if file is larger
 def png_to_ico(image_path, output_path, target_size=(256, 256)):
-    with Image.open(image_path) as img:
-        current_size = img.size
-        if current_size[0] > 256 or current_size[1] > 256:
-            img = img.resize(target_size, Image.Resampling.LANCZOS)
-        img = img.convert('RGBA')
-        img.save(output_path, format='ICO', sizes=[img.size])
+   with Image.open(image_path) as img:
+       # Crop to square if needed
+       width, height = img.size
+       if width != height:
+           size = min(width, height)
+           left = (width - size) // 2
+           top = (height - size) // 2
+           right = left + size
+           bottom = top + size
+           img = img.crop((left, top, right, bottom))
+
+       # Resize if too large
+       if width > 256 or height > 256:
+           img = img.resize(target_size, Image.Resampling.LANCZOS)
+
+       img = img.convert('RGBA')
+       img.save(output_path, format='ICO', sizes=[img.size])
 
 # removing temp files
 def remove_old_files(folder, seconds):
@@ -62,9 +72,10 @@ def remove_old_files(folder, seconds):
                 print(f"LOG: {log_time} - Removing old file: {file_path}")
                 os.remove(file_path)  # Delete the file
 
+
 @rt("/")
 def homepage():
-    time_to_remove = 5
+    time_to_remove = 86400
     remove_old_files(temp_dir, time_to_remove)  # Removes files older than [in seconds]
 
     return Html(
@@ -75,20 +86,27 @@ def homepage():
             Link(rel="icon", href="images/favicon.png", type="image/png"),
         ),
         Body(
-            Titled("Placeholder text for jpg/png to .ico converter."),
-            Div(
-                P("Placeholder text for jpg/png to .ico converter.")
+            Titled(
+                "Image to .ico Converter",
+                cls="title",
             ),
-            Br(),
             Div(
                 Form(
-                    Input(type="file", name="file"),
-                    Button("Upload and Convert", type="submit", cls=""),
+                    Hr(),
+                    P("Select file:"),
+                    Input(type="file", name="file", required=True, cls="browse"),
+                    Br(),
+                    Br(),
+                    Hr(),
+                    Br(),
+                    Button("Upload and Convert", type="submit", cls="button"),
                     method="post",
                     action="/upload",
-                    enctype="multipart/form-data" # required for file uploading (to be researched)
+                    enctype="multipart/form-data", # required for file uploading (to be researched),
+                    cls="div"
                 )
-            )
+            ),
+            cls="container"
         )
     )
 
@@ -117,19 +135,24 @@ async def upload(file: UploadFile = None):
             Link(rel="icon", href="images/favicon.png", type="image/png"),
         ),
         Body(
-            Titled("File Uploaded Successfully."),
+            Titled("File Uploaded Successfully", cls="title"),
             Div(
-                P(f"File {file.filename} uploaded successfully and converted to {GlobalFileName.file_name}.{GlobalFileExtension.file_extension}"),
+                Hr(),
+                P(f"File \"{file.filename}\" was uploaded successfully and converted to \"{GlobalFileName.file_name}.{GlobalFileExtension.file_extension}\""),
+                cls="div",
             ),
             Div(
+                Hr(),
+                Br(),
                 Form(
-                    Button("Download File", type="submit"),
+                    Button("Go To Downloads", type="submit", cls="button"),
                     method="get",
                     action=f"/page/{GlobalFileName.file_name}/{GlobalFileExtension.file_extension}",
-                    cls="button"
+                    cls="div"
                 ),
                 cls="div"
-            )
+            ),
+            cls="container"
         )
     )
 
@@ -165,27 +188,40 @@ def download_page(filename: str, extension: str):
                 Link(rel="icon", href="images/favicon.png", type="image/png"),
             ),
             Body(
+                Titled("Download Your File", cls="title"),
                 Div(
-                    H1("Your File is Ready!"),
-                    Div(
-                        A(
-                            "Download Converted File",
-                            href=f"/download/{filename}/{extension}",
-                            cls="button"
-                        ),
-                        cls="div",
-                    ),
-                    Br(),
-                    Div(
-                        Button(
-                            A("Return to Home", href="/"),
-                            cls="button"
-                        ),
-                        cls="div",
+                    Hr(),
+                    P("File Preview", cls="div"),
+                    Img(src=f"/download/{filename}/{extension}", alt="img", style="max-width: 100%; height: auto;"),
+                    cls="div",
                     ),
                     cls="div",
-                )
+                ),
+                Br(),
+                Hr(),
+                Br(),
+                Div(
+                    Button(
+                        A(
+                        "Download Converted File",
+                        href=f"/download/{filename}/{extension}",
+                        cls="button"
+                        ),
+                        cls="button",
+                    ),
+                    cls="div",
+                ),
+                Br(),
+                Br(),
+                Div(
+                    Button(
+                        A("Return to Home", href="/", cls="button"),
+                        cls="button",
+                    ),
+                    cls="div",
+                ),
+                cls="container",
             )
-        )
+
 
 serve() # type: ignore
