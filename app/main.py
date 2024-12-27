@@ -11,10 +11,10 @@ import time
 from datetime import datetime
 
 # for Docker
-# app, rt = fast_app(static_path="static") # type: ignore
+app, rt = fast_app(static_path="static") # type: ignore
 
 # for local
-app, rt = fast_app(static_path="app/static") # type: ignore
+# app, rt = fast_app(static_path="app/static") # type: ignore
 
 
 temp_dir = Path("app/temp")
@@ -86,25 +86,17 @@ def homepage():
             Link(rel="icon", href="images/favicon.png", type="image/png"),
         ),
         Body(
-            Titled(
-                "Image to .ico Converter",
-                cls="title",
-            ),
-            Div(
-                Form(
-                    Hr(),
-                    P("Select file:"),
-                    Input(type="file", name="file", required=True, cls="browse"),
-                    Br(),
-                    Br(),
-                    Hr(),
-                    Br(),
-                    Button("Upload and Convert", type="submit", cls="button"),
-                    method="post",
-                    action="/upload",
-                    enctype="multipart/form-data", # required for file uploading (to be researched),
-                    cls="div"
-                )
+            Titled("Image to .ico Converter"),
+            Form(
+                P("Select file", cls="select"),
+                Input(type="file", name="file", required=True, cls="browse"),
+                Br(),
+                Br(),
+                Br(),
+                Button("Upload and Convert", type="submit"),
+                method="post",
+                action="/upload",
+                enctype="multipart/form-data", # required for file uploading (to be researched),
             ),
             cls="container"
         )
@@ -135,24 +127,17 @@ async def upload(file: UploadFile = None):
             Link(rel="icon", href="images/favicon.png", type="image/png"),
         ),
         Body(
-            Titled("File Uploaded Successfully", cls="title"),
+            Titled("File Uploaded Successfully"),
             Div(
-                Hr(),
                 P(f"File \"{file.filename}\" was uploaded successfully and converted to \"{GlobalFileName.file_name}.{GlobalFileExtension.file_extension}\""),
-                cls="div",
-            ),
-            Div(
-                Hr(),
                 Br(),
                 Form(
-                    Button("Go To Downloads", type="submit", cls="button"),
+                    Button("Go To Downloads", type="submit"),
                     method="get",
                     action=f"/page/{GlobalFileName.file_name}/{GlobalFileExtension.file_extension}",
-                    cls="div"
-                ),
-                cls="div"
-            ),
-            cls="container"
+                    cls="container"
+                )
+            )
         )
     )
 
@@ -188,39 +173,34 @@ def download_page(filename: str, extension: str):
                 Link(rel="icon", href="images/favicon.png", type="image/png"),
             ),
             Body(
-                Titled("Download Your File", cls="title"),
+                Titled("Download Your File"),
                 Div(
-                    Hr(),
-                    P("File Preview", cls="div"),
+                    P("File Preview"),
                     Img(src=f"/download/{filename}/{extension}", alt="img", style="max-width: 100%; height: auto;"),
-                    cls="div",
-                    ),
-                    cls="div",
+                    )
                 ),
-                Br(),
-                Hr(),
-                Br(),
+                Div(
+                    Br(),
+                    Br(),
+                ),
                 Div(
                     Button(
                         A(
                         "Download Converted File",
                         href=f"/download/{filename}/{extension}",
-                        cls="button"
                         ),
-                        cls="button",
                     ),
-                    cls="div",
+                    cls="container",
                 ),
-                Br(),
-                Br(),
+                Div(
+                    Br()
+                ),
                 Div(
                     Button(
-                        A("Return to Home", href="/", cls="button"),
-                        cls="button",
+                        A("Return to Home", href="/"),
                     ),
-                    cls="div",
+                    cls="container",
                 ),
-                cls="container",
             )
 
 
