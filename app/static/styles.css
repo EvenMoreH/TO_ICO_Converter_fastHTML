@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    --font-size: clamp(1rem, 0.5rem + 4.0vw, 2rem);
+    --font-size: clamp(1rem, 1.2vw, 2rem);
     background-color: rgb(30, 30, 30);
     color: whitesmoke;
     accent-color: #292929;
@@ -51,7 +51,7 @@
   /* Ensure Mobile Responsiveness */
   @media (max-width: 768px) {
     * {
-        --font-size: clamp(2rem, 0.5rem + 4.0vw, 4rem);
+        --font-size: clamp(1rem, 2vw, 2rem);
         background-color: rgb(30, 30, 30);
         color: whitesmoke;
         accent-color: #292929;

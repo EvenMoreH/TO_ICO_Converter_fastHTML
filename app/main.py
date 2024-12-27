@@ -1,6 +1,6 @@
 from fasthtml.common import * # type: ignore
 from fasthtml.common import (
-    Form, Input, Button, Html, Head, Body, Div, P, Title, Titled, Base, Link, Br, A, Img, UploadFile ,Response
+    Form, Input, Button, Html, Head, Body, Div, P, Title, Titled, Base, Link, Br, A, Img, Meta, UploadFile ,Response
 )
 from PIL import Image # type: ignore
 from pathlib import Path
@@ -80,6 +80,7 @@ def homepage():
 
     return Html(
         Head(
+            Meta(name="viewport", content="width=device-width, initial-scale=1"),
             Title("ICO Converter"),
             Link(rel="stylesheet", href="styles.css"),
             Link(rel="icon", href="images/favicon.ico", type="image/x-icon"),
@@ -121,6 +122,7 @@ async def upload(file: UploadFile = None):
 
     return Html(
         Head(
+            Meta(name="viewport", content="width=device-width, initial-scale=1"),
             Title("ICO Converter"),
             Link(rel="stylesheet", href="styles.css"),
             Link(rel="icon", href="images/favicon.ico", type="image/x-icon"),
@@ -167,6 +169,7 @@ def download_page(filename: str, extension: str):
             Head(
                 # using base with only "/" to make the path absolute - works locally
                 Base(href="/"),
+                Meta(name="viewport", content="width=device-width, initial-scale=1"),
                 Title("ICO Converter"),
                 Link(rel="stylesheet", href="styles.css"),
                 Link(rel="icon", href="images/favicon.ico", type="image/x-icon"),
