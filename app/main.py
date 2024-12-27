@@ -181,7 +181,6 @@ def download_page(filename: str, extension: str):
                 ),
                 Div(
                     Br(),
-                    Br(),
                 ),
                 Div(
                     Button(

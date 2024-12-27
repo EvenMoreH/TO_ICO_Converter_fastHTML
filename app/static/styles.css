@@ -78,13 +78,15 @@
     color: whitesmoke;
     font-size: var(--font-size);
     text-decoration: none;
-    border: 2%;
+    border-radius: 0.4rem;
+    border-color: whitesmoke;
     background: #535557;
   }
 
   button {
     padding: 0.5rem 1rem;
-    border: 2%;
+    border-radius: 0.4rem;
+    border-color: whitesmoke;
     background: #535557;
     color: whitesmoke;
     border-radius: 5px;
