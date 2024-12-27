@@ -1,6 +1,6 @@
 from fasthtml.common import * # type: ignore
 from fasthtml.common import (
-    Form, H1, Input, Button, Html, Head, Body, Div, P, Title, Titled, A, Link, Br, UploadFile ,Response
+    Form, H1, Input, Button, Html, Head, Body, Div, P, Title, Titled, Base, Link, Br, A, UploadFile ,Response
 )
 from PIL import Image # type: ignore
 from pathlib import Path
@@ -8,8 +8,14 @@ from starlette.responses import FileResponse
 from mimetypes import guess_type
 import os
 import time
+from datetime import datetime
 
-app, rt = fast_app(static_path="static") # type: ignore
+# for Docker
+# app, rt = fast_app(static_path="static") # type: ignore
+
+# for local
+app, rt = fast_app(static_path="app/static") # type: ignore
+
 
 temp_dir = Path("app/temp")
 temp_dir.mkdir(parents=True, exist_ok=True)
@@ -52,19 +58,21 @@ def remove_old_files(folder, seconds):
 
             # Check if the file is older than the threshold
             if file_mtime < age_threshold:
-                print(f"Removing old file: {file_path}")
+                log_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                print(f"LOG: {log_time} - Removing old file: {file_path}")
                 os.remove(file_path)  # Delete the file
 
 @rt("/")
 def homepage():
-    remove_old_files(temp_dir, 2)  # Removes files older than [in seconds]
+    time_to_remove = 5
+    remove_old_files(temp_dir, time_to_remove)  # Removes files older than [in seconds]
 
     return Html(
         Head(
             Title("ICO Converter"),
             Link(rel="stylesheet", href="styles.css"),
-            Link(rel="icon", href="placeholder", type="image/x-icon"),
-            Link(rel="icon", href="placeholder", type="image/png"),
+            Link(rel="icon", href="images/favicon.ico", type="image/x-icon"),
+            Link(rel="icon", href="images/favicon.png", type="image/png"),
         ),
         Body(
             Titled("Placeholder text for jpg/png to .ico converter."),
@@ -103,10 +111,10 @@ async def upload(file: UploadFile = None):
 
     return Html(
         Head(
-            Title("Uploaded Successfully"),
+            Title("ICO Converter"),
             Link(rel="stylesheet", href="styles.css"),
-            Link(rel="icon", href="placeholder", type="image/x-icon"),
-            Link(rel="icon", href="placeholder", type="image/png"),
+            Link(rel="icon", href="images/favicon.ico", type="image/x-icon"),
+            Link(rel="icon", href="images/favicon.png", type="image/png"),
         ),
         Body(
             Titled("File Uploaded Successfully."),
@@ -117,8 +125,10 @@ async def upload(file: UploadFile = None):
                 Form(
                     Button("Download File", type="submit"),
                     method="get",
-                    action=f"/page/{GlobalFileName.file_name}/{GlobalFileExtension.file_extension}"
-                )
+                    action=f"/page/{GlobalFileName.file_name}/{GlobalFileExtension.file_extension}",
+                    cls="button"
+                ),
+                cls="div"
             )
         )
     )
@@ -145,25 +155,37 @@ async def download(filename: str, extension: str):
 @rt("/page/{filename}/{extension}", methods=["GET"])
 def download_page(filename: str, extension: str):
     # Create a FastHTML page with a download link and other elements
-    return Titled(
-        "Download Page",
-        Div(
-            H1("Your File is Ready!"),
-            Div(
-                A(
-                    "Download Converted File",
-                    href=f"/download/{filename}/{extension}",
-                    cls="button primary"
-                ),
+    return Html(
+            Head(
+                # using base with only "/" to make the path absolute - works locally
+                Base(href="/"),
+                Title("ICO Converter"),
+                Link(rel="stylesheet", href="styles.css"),
+                Link(rel="icon", href="images/favicon.ico", type="image/x-icon"),
+                Link(rel="icon", href="images/favicon.png", type="image/png"),
             ),
-            Br(),
-            Div(
-                Button(
-                    A("Return to Home", href="/"),
-                    cls="button secondary"
+            Body(
+                Div(
+                    H1("Your File is Ready!"),
+                    Div(
+                        A(
+                            "Download Converted File",
+                            href=f"/download/{filename}/{extension}",
+                            cls="button"
+                        ),
+                        cls="div",
+                    ),
+                    Br(),
+                    Div(
+                        Button(
+                            A("Return to Home", href="/"),
+                            cls="button"
+                        ),
+                        cls="div",
+                    ),
+                    cls="div",
                 )
             )
         )
-    )
 
 serve() # type: ignore
