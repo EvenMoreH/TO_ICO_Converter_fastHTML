@@ -1,6 +1,6 @@
 from fasthtml.common import * # type: ignore
 from fasthtml.common import (
-    Form, Input, Button, Html, Head, Body, Div, P, Title, Titled, Base, Link, Br, A, Img, Hr, UploadFile ,Response
+    Form, Input, Button, Html, Head, Body, Div, P, Title, Titled, Base, Link, Br, A, Img, UploadFile ,Response
 )
 from PIL import Image # type: ignore
 from pathlib import Path
@@ -203,5 +203,6 @@ def download_page(filename: str, extension: str):
                 ),
             )
 
-
-serve() # type: ignore
+if __name__ == '__main__':
+    # Important: Use host='0.0.0.0' to make the server accessible outside the container
+    serve(host='0.0.0.0', port=5002) # type: ignore
