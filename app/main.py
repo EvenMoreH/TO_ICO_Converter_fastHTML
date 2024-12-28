@@ -178,7 +178,8 @@ def download_page(filename: str, extension: str):
             Body(
                 Titled("Download Your File"),
                 Div(
-                    P("File Preview"),
+                    P("File Preview", style="min-width: 220px", cls="select"),
+                    Br(),
                     Img(src=f"/download/{filename}/{extension}", alt="img", style="max-width: 100%; height: auto;"),
                     )
                 ),
@@ -207,4 +208,4 @@ def download_page(filename: str, extension: str):
 
 if __name__ == '__main__':
     # Important: Use host='0.0.0.0' to make the server accessible outside the container
-    serve(host='0.0.0.0', port=5002) # type: ignore
+    serve(host='0.0.0.0', port=5003) # type: ignore
