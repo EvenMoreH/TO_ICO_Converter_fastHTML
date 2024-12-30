@@ -180,7 +180,7 @@ def download_page(filename: str, extension: str):
                 Div(
                     P("File Preview", style="min-width: 220px", cls="select"),
                     Br(),
-                    Img(src=f"/download/{filename}/{extension}", alt="img", style="max-width: 100%; height: auto;"),
+                    Img(src=f"/download/{filename}/{extension}", alt="img", style="max-width: 100%; height: auto; margin: auto;"),
                     )
                 ),
                 Div(
